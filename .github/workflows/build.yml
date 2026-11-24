@@ -1,6 +1,8 @@
-name: Build Kernel Packages
+name: Build & Auto-Update Kernel
 
 on:
+  schedule:
+    - cron: '0 6 * * *'
   push:
     branches: [ main ]
     paths:
@@ -13,7 +15,49 @@ permissions:
   contents: write
 
 jobs:
+  check-update:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    outputs:
+      updated: ${{ steps.sync.outputs.updated }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install update tools
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm git pacman-contrib curl
+
+      - name: Run update.sh and push if changed
+        id: sync
+        run: |
+          chmod +x update.sh
+          ./update.sh
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@://github.com"
+          if ! git diff --quiet PKGBUILD; then
+            source PKGBUILD
+            git add PKGBUILD
+            git commit -m "chore: update to ${pkgver}-${pkgrel}"
+            git push
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No updates found."
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check-update
+    if: |
+      always() && (
+        github.event_name == 'push' ||
+        needs.check-update.outputs.updated == 'true'
+      )
     runs-on: ubuntu-latest
     container:
       image: archlinux:base-devel
@@ -21,6 +65,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Initialize pacman and install dependencies
         run: |
