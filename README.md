@@ -8,7 +8,17 @@ Minimalist Arch Linux kernel package tailored specifically for **Mac mini 2018 (
 - Trimmed kernel configuration (`localmodconfig`) built exclusively for `macmini8,1` hardware — laptop-specific drivers (Touch Bar, batteries, trackpads, discrete mobile GPUs) and `-docs` package are stripped out for significantly faster compile times.
 - Includes essential T2 and Mac mini modules (`T2BCE_*`, `MACSMC_*`, `BT_HCIBCM4377`, `BRCMFMAC`, `TIGON3`, `AQTION`).
 
-## Build & Install
+## Installation
+
+### Option 1: Prebuilt Packages (Recommended)
+
+Install the latest packages directly from the [Releases](https://github.com/UncleZI/linux-t2-arch-mm81/releases) page:
+
+```sh
+sudo pacman -U linux-t2-mm81-*.pkg.tar.zst linux-t2-mm81-headers-*.pkg.tar.zst
+```
+
+### Option 2: Build from Source
 
 ```sh
 git clone https://github.com/UncleZI/linux-t2-arch-mm81
@@ -36,4 +46,3 @@ makepkg -si
 
 - [t2linux](https://github.com/t2linux) for the T2 kernel patches and documentation.
 - [NoaHimesaka1873/linux-t2-arch](https://github.com/NoaHimesaka1873/linux-t2-arch) for the original Arch Linux `PKGBUILD` structure.
-
