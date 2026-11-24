@@ -1,4 +1,4 @@
-# linux-t2-mm81
+# linux-t2-arch-mm81
 
 Minimalist Arch Linux kernel package tailored specifically for **Mac mini 2018 (`macmini8,1`)** with Apple T2 Security Chip support.
 
