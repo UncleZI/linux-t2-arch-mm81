@@ -1,0 +1,63 @@
+name: Build Kernel Packages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'PKGBUILD'
+      - 'config.x86_64'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize pacman and install dependencies
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm git sudo
+
+      - name: Setup builder user and build kernel
+        run: |
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          chown -R builder:builder "$GITHUB_WORKSPACE"
+          su builder -c '
+            cd "$GITHUB_WORKSPACE"
+            export MAKEFLAGS="-j$(nproc)"
+            export PKGEXT=".pkg.tar.zst"
+            makepkg -s --noconfirm --skippgpcheck
+          '
+
+      - name: Read version from PKGBUILD
+        id: meta
+        run: |
+          source PKGBUILD
+          echo "fullver=${pkgver}-${pkgrel}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.meta.outputs.fullver }}
+          name: linux-t2-mm81 ${{ steps.meta.outputs.fullver }}
+          body: |
+            Arch Linux kernel and headers tailored for **Mac mini 2018 (`macmini8,1`)**.
+
+            ### Installation
+            ```sh
+            sudo pacman -U linux-t2-mm81-*.pkg.tar.zst linux-t2-mm81-headers-*.pkg.tar.zst
+            ```
+          files: |
+            *.pkg.tar.zst
+

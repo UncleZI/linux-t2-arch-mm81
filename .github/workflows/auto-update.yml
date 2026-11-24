@@ -1,0 +1,44 @@
+name: Auto-Update PKGBUILD
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm git pacman-contrib curl
+
+      - name: Run update.sh
+        run: |
+          chmod +x update.sh
+          ./update.sh
+
+      - name: Commit and push if updated
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@://github.com"
+          if ! git diff --quiet PKGBUILD; then
+            source PKGBUILD
+            git add PKGBUILD
+            git commit -m "chore: update to ${pkgver}-${pkgrel}"
+            git push
+          else
+            echo "No updates found."
+          fi
+
