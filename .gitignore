@@ -1,0 +1,9 @@
+*.tar.*
+*.pkg.tar.*
+src/
+pkg/
+patches/
+PKGBUILD.orig
+config.x86_64.orig
+*.patch.zst
+*.patch.zst.sig
