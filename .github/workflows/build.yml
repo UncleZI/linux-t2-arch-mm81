@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install update tools
         run: |
@@ -41,7 +41,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@://github.com"
           if ! git diff --quiet PKGBUILD; then
-            source PKGBUILD
+            source ./PKGBUILD
             git add PKGBUILD
             git commit -m "chore: update to ${pkgver}-${pkgrel}"
             git push
@@ -64,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
 
@@ -89,7 +89,7 @@ jobs:
       - name: Read version from PKGBUILD
         id: meta
         run: |
-          source PKGBUILD
+          source ./PKGBUILD
           echo "fullver=${pkgver}-${pkgrel}" >> "$GITHUB_OUTPUT"
 
       - name: Publish Release
@@ -106,4 +106,3 @@ jobs:
             ```
           files: |
             *.pkg.tar.zst
-
