@@ -36,8 +36,10 @@ jobs:
       - name: Run update.sh and push if changed
         id: sync
         run: |
+          useradd -m builder
+          chown -R builder:builder "$GITHUB_WORKSPACE"
           chmod +x update.sh
-          ./update.sh
+          su builder -c 'cd "$GITHUB_WORKSPACE" && ./update.sh'
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@://github.com"
           if ! git diff --quiet PKGBUILD; then
@@ -50,7 +52,6 @@ jobs:
             echo "No updates found."
             echo "updated=false" >> "$GITHUB_OUTPUT"
           fi
-
   build:
     needs: check-update
     if: |
