@@ -71,7 +71,7 @@ prepare() {
     src="${src##*/}"
     src="${src%.zst}"
     [[ $src = *.patch ]] || continue
-    if patch -Np1 --dry-run -R < "$src" >/dev/null 2>&1; then
+    if patch -Np1 --dry-run -R < "../$src" >/dev/null 2>&1; then
       echo "Skipping already applied patch ${src##*/}..."
       continue
     fi
