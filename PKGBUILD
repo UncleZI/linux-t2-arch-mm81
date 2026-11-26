@@ -9,7 +9,7 @@
 # re-enabled manually (T2BCE_*, APPLETB_*, BT_HCIBCM4377, macsmc_hwmon).
 
 pkgbase=linux-t2-mm81
-pkgver=7.3.5.arch1
+pkgver=7.3.6.arch1
 pkgrel=1
 pkgdesc='Linux kernel for T2 Mac Mini 2018 (macmini8,1)'
 url='https://github.com/archlinux/linux'
@@ -29,7 +29,7 @@ options=(
 )
 _srcname=linux-${pkgver%.*}
 _srctag=v${pkgver%.*}-${pkgver##*.}
-T2_PATCH_HASH=56ef7488988b4fd7173eab73740e14794534dd61
+T2_PATCH_HASH=6f5bbfea364276b80ab1a4e2bd655b9399ea9a7f
 source=(
   https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
   $url/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
@@ -41,17 +41,17 @@ validpgpkeys=(
   647F28654894E3BD457199BE38DBBDC86092693E  # Greg Kroah-Hartman
   83BC8889351B5DEBBB68416EB8AC08600F108CDF  # Jan Alexander Steffens (heftig)
 )
-sha256sums=('8f293f83d54f0b7b9be56863ebc5e4ea79d73e530b4ae55c572be97ef39f0990'
+sha256sums=('8183d475a76a0faffa92d6cd500af421f589dfd0300a0f1060bb875e11d45723'
             'SKIP'
-            'ab8cc9a56046bfdcbe8741283cb642fcb1ab25de4ac2b66fe655dd34e3ddc3b6'
+            'e76df8ca615ad71eb9cc214b8293202287a4efb1136098972a832d2ce72a02bf'
             'SKIP'
-            '914d933fbfb8865a9edf93115516c1b25f15d44d5ede0fcb80eaef1015cc0163')
+            '77d1cf383bf0c48d8e3311f430b6c777180f0693d407771231c1c528a946881c')
 sha256sums_x86_64=('3478af24984303c85552231e1e643a6de707d7fa72eee5d29c0f6c037eff5d21')
-b2sums=('333bad17d6e6ae06935b08e8715cc617f59c0fdbab52dd1026a16b1125c8e693482946dc46f5b6e1f7c24a3919ddc44a8dd39f045dcb3d2da8b8001c113f13c0'
+b2sums=('78da05b71d4fb975d759e7e9f74917531fc06b0740cdf9eab69b1d7b838d6a0cc19a087a629bb41eb4ae77f9ca745cd309e4d90911e4b74347016a059b3fac02'
         'SKIP'
-        'b4517a6cf6abb495af1df4884f66ffe79833fa8fe2cae08a00a88ee2ae508c3e68ce1f028faedf9dfcd0c8e687bbd7f9df5ed701417b9e23058f178256975f02'
+        '5ca895061b555f0561546525f1ab213fe27c1ba7e6a0bbe0f4c6bc7b135db707bd8162d47d107bf2ec862a09b34f970a3b151c6267540d3b20366e102e3421e7'
         'SKIP'
-        'a2cd453784e08db080f7d5f3298e303a5f49a11278b377633dd74d40b607976700dceebd26314acbc3447f2c504e88b0a12ea1447a600b0a513af18116573558')
+        '33b78afd6a5d447e099afaffa5b587859adb2c2e14adc51bd83853bb617024791e99a9263e83e7a3ea01405e0ff900269040a6c0e993760615012606e5d0592f')
 b2sums_x86_64=('1f373a3d4167bf8d0c7b6476fcb4724910a92487c8720be15659defe1bec7c061ac4f3b1d3a27bf9aced93e42b987800929b2c77c74da22d1f1095a06da796e1')
 
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
