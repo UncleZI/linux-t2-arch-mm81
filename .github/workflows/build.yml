@@ -37,12 +37,13 @@ jobs:
         id: sync
         run: |
           useradd -m builder
-          chown -R builder:builder "$GITHUB_WORKSPACE"
+          mkdir -p /tmp/srcdest
+          chown -R builder:builder "$GITHUB_WORKSPACE" /tmp/srcdest
           chmod +x update.sh
           git config --system --add safe.directory '*'
-          su builder -c 'cd "$GITHUB_WORKSPACE" && ./update.sh'
+          su builder -c 'cd "$GITHUB_WORKSPACE" && SRCDEST=/tmp/srcdest ./update.sh'
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@://github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet PKGBUILD; then
             source ./PKGBUILD
             git add PKGBUILD
@@ -53,6 +54,7 @@ jobs:
             echo "No updates found."
             echo "updated=false" >> "$GITHUB_OUTPUT"
           fi
+
   build:
     needs: check-update
     if: |
@@ -80,10 +82,12 @@ jobs:
         run: |
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chown -R builder:builder "$GITHUB_WORKSPACE"
+          mkdir -p /tmp/srcdest
+          chown -R builder:builder "$GITHUB_WORKSPACE" /tmp/srcdest
           git config --system --add safe.directory '*'
           su builder -c '
             cd "$GITHUB_WORKSPACE"
+            export SRCDEST=/tmp/srcdest
             export MAKEFLAGS="-j$(nproc)"
             export PKGEXT=".pkg.tar.zst"
             makepkg -s --noconfirm --skippgpcheck
