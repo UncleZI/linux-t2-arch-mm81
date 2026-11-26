@@ -32,13 +32,14 @@ jobs:
             pacman-key --init
             pacman-key --populate archlinux
             pacman -Syu --noconfirm --needed sudo pacman-contrib git curl
-            useradd -m builduser
-            chown -R builduser:builduser /build
+            HOST_UID=$(stat -c "%u" /build)
+            useradd -u "$HOST_UID" -m builduser || useradd -m builduser
+            chown -R "$HOST_UID" /build
             chmod +x update.sh
-            su builduser -c "./update.sh"
+            su - builduser -c "cd /build && ./update.sh"
           '
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@://github.com"
           if ! git diff --quiet PKGBUILD; then
             source ./PKGBUILD
             git add PKGBUILD
